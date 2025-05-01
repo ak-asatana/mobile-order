@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>サイのツノ　テイクアウトモバイルオーダー</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size:6vw;   /* 画面幅の4% */
+                       /* pxは固定サイズ、emはページ内の規定サイズに対して何倍か */
+      padding: 4vw 4vw 4vw 4vw;  /*上・右・下・左の順に設定*/
+      margin: 0vw;
+      max-width: 90vw;
+      background-color: #3FBF4F; 
+    }
+
+    h1 {
+      font-size: 1em;
+      margin:1.6vw;
+      padding: 0vw;
+    }
+    h2 {
+      font-size:0.75em;
+      font-weight: normal;
+      margin:0vw;
+      padding:0vw;
+    }
+    h3 {
+      font-size:1.0em;
+      text-align:center;
+      margin: 0vw;
+      padding :0vw;
+    }
+    h4 {
+      font-size:0.75em;
+      text-align:left;
+      font-weight: normal;
+      margin-bottom:0vw 0vw 10vw 0vw;
+      padding :0vw;
+    }
+    h5 {
+      font-size:0.2em;
+    }
+
+    h6 {
+      font-size: clamp(3vw, 1.2em, 7vw);
+      margin:0.2vw;
+      color:red;
+    }
+
+    .menuItems {
+      display:flex;
+      justify-content:center;
+      align-items: center;
+      text-align:center;
+      min-width: 80vw;
+      max-width: 95vw;
+      margin: 0 auto;  /* ブロック自体を中央に */
+    }
+
+    .item {
+      display:flex;
+      align-items: flex-start;
+      margin-bottom: 1.6vw;
+      gap: 0.2vw;
+    }
+
+ /*-- class="item" 直下の設定 -------------------------------------*/
+    .item img {
+      width: 40vw;
+      height: auto;
+      cursor: pointer;
+      display: block;
+      margin-bottom: 0.4vw;
+    }
+    .item figure {
+      flex: 2;
+      margin: 0;
+    }
+
+    figcaption {
+      font-size: 0.8em;
+      color: #000;
+      margin-top: 0.4vw;
+    }
+    .small-caption {  /*ハーフのMーG用*/
+      font-size:0.7em;
+    }
+ /*--------------------------------------------------------------*/
+
+     .item-details {
+      flex: 3;
+      border: 0.2vw solid #000;
+    }
+
+
+ /*-- 2列で並べる設定 -------------------------------------------*/
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);  /* 2列 */
+      font-size:0.8em;
+      gap: 0.4vw;
+      margin: 0.4vw;
+      max-width: 60vw;
+    }
+
+    .option-grid-roux {   /*カレールー用の option-grid */
+      display: grid;
+      grid-template-columns: repeat(2,1fr);  /*  2列 */
+      font-size:0.8em;
+      gap: 0.4vw;
+      max-width: 73vw;
+      margin: 0 auto 6vw auto;               /* 中央寄せ */
+      transform: scale(1.2);          /* 少し拡大（大きく見せる） */
+      transform-origin: top center; /* 拡大の起点を中央上部にする */
+    }
+ /*-------------------------------------------------------------------*/
+
+    .option-item {            /* option-grid(-roux) 内部のclass */
+      display: flex;
+      flex-direction: column;    /* ラベルの下に入力欄を並べる */
+      align-items: center;       /* 子要素を中央に */
+      text-align: center;
+      margin-top: 0vw;
+      border: 0.08vw solid #ccc;
+    }
+
+  /*-- class="option-item 直下の設定 -----------------------------------*/
+/* 
+   .option-item label {
+
+      font-size: 0.9em !important;
+
+      
+    }
+    .option-grid-roux label {
+      width: 36vw;
+      height: auto;
+      align-items:center !important;
+    }
+*/
+
+    .select-with-unit {
+      display: flex;
+      align-items: center;
+      gap: 0vw;
+    }
+
+    .option-item select {
+      width: 18vw !important;
+      height: auto;
+      padding: 0.32vw;
+      margin-bottom: 0.4vw;
+      font-weight: normal;
+      font-size: clamp(3vw, 0.9em, 5vw);
+    }
+
+    .unit {
+      font-size: 0.75em !important;
+    }
+ /*-------------------------------------------------------------------*/
+
+
+    label {
+      display: block;
+      margin-top: 0.8vw;
+    }
+
+    input {
+      font-size: 4vw;
+      width: 100%;       /* フォーム全体から見て何%のサイズか*/
+      height: 4vw;
+      padding: 0.4vw;
+      margin-top: 0.4vw;
+    }
+
+    textarea {
+      font-size: 4vw;
+      width: 100%;       
+      height: auto !important;  
+  /* 既存設定と競合した際に、「!important」の表記があるほうが優先される */
+      min-height: 16vw; /*最小値は4行分（基本の文字サイズ：4vw）*/
+      padding: 0.4vw;
+      margin-top: 0.4vw;
+    }
+
+    button {
+      font-size: 1.0em;
+      width: 40%;
+      height: auto;
+      text-align: center;
+    }
+    .button {
+      text-align: center;
+    }
+
+/* # は、idを指定して style を適用させる（class指定より優先度は高い） */
+    #total {
+      font-weight: bold;
+      margin-top: 1.6vw;
+      font-size: 1.0em;  /*相対的なサイズ指定*/
+    }
+
+  /*-- 注文確認画面の設定 -------------------------------------------*/
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); /* 半透明の黒 */
+      z-index: 1000;
+      display: none;
+    }
+
+   /* モーダルの注文確認ボックス */
+    #OrderCheck {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 3.2vw; 
+      border-radius: 1.6vw;
+      z-index: 1001;
+      display: none;
+      width: 75vw;
+      max-width: 90%;
+      font-size: 3.2vw;
+      max-height: 80vw;        /* 画面の80%までの高さ */
+      overflow-y: auto;        /* はみ出たら縦スクロール */
+      font-size: clamp(4vw, 1.25em, 6vw);  /* フォントも可変で見やすく */
+                                        /* clamp(最小サイズ,推奨サイズ,最大サイズ)
+    }
+
+    #CloseModal {
+      font-size: 1em;
+      width: 40%;
+      height: 5.6vw;
+      margin-top: 0.8vw;
+    }
+  /*-------------------------------------------------------------------*/
+
+  </style>
+</head>
+
+
+<body>
+  <h1>ご注文フォーム</h1>
+  <h1>注意事項</h1>
+  <h2>・注文は当日のみ有効です<br>・注文する商品のみ選択してください<br>・決済機能はなく、テイクアウト専用です<br>・金額は税込みです<br>・サイツノ弁当の注文は店頭でお願いします</h2>
+  <form id="OrderForm">
+    <label>お名前 <span style="color: red;">必須</span>
+      <input type="text" name="user_name"    required>
+    </label>
+    <label>来店予定時間 <span style="color: red;">必須</span>:
+      <input type="time" id ="time" name="time"  required>
+    </label>
+    <label>電話番号  <span style="color: red;">必須</span>
+      <input type="tel" id="user_tel" name="user_tel"      required>
+    </label>
+    <label>メールアドレス
+      <input type="email" name="user_email" placeholder="ご注文内容の確認メールが届きます">
+    </label>
+
+    <h5> <br> </h5>
+
+    <h1>商品（タップして詳細を表示）</h1>
+
+    <h5> <br> </h5>
+
+<!-- まろやかカレー ------------------------------------------------------>
+    <h3 class="toggleMenu" style="cursor: pointer; color: #e53935; ">  
+                                                         <!-- ↑ 下線はいらないから外してみた text-decoration: underline; -->
+      まろやかカレー
+    </h3>
+    <div class="menuItems" style="display: none;">     <!-- menuItems は商品一覧を包むラッパー -->
+
+      <div class="item">
+        <figure>
+          <img src="img/maroyaka.jpg" alt="まろやか" class="item-image" data-target="maro">
+          <figcaption>まろやかカレー</figcaption>
+        </figure>
+
+        <div class="item-details" id="maroyaka">
+
+          <h3>ごはん付きお弁当</h3>
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="maro" data-price="720" data-label="まろやかカレー">
+                  <option value="" disabled selected>720円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="maro_rice" data-price="720" data-label="まろやかカレー<br>ご飯大盛">
+                  <option value="" disabled selected>720円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="maro_roux"  data-price="770" data-label="まろやかカレー<br>ルー大盛">
+                  <option value="" disabled selected>770円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="maro_large" data-price="770" data-label="まろやかカレー<br>ご飯ルー大盛">
+                  <option value="" disabled selected>770円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <div class="item-details">
+        <h3>ルー</h3>
+        <h2>200gが1人前、300gが大盛りです</h2>
+        <div class="option-grid-roux">
+
+          <div class="option-item">
+            <label>100g</label>
+            <div class="select-with-unit">
+              <select name="maro100" data-price="220" data-label="まろやかカレー100g">
+                <option value="" disabled selected>220円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>200g</label>
+            <div class="select-with-unit">
+              <select name="maro200" data-price="440" data-label="まろやかカレー200g">
+                <option value="" disabled selected>440円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>300g</label>
+            <div class="select-with-unit">
+              <select name="maro300" data-price="660" data-label="まろやかカレー300g">
+                <option value="" disabled selected>660円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>400g</label>
+            <div class="select-with-unit">
+              <select name="maro400" data-price="880" data-label="まろやかカレー400g">
+                <option value="" disabled selected>880円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+        </div>  <!-- class="option-grid-roux" を閉じてる-->
+      </div> <!-- class="item-details" を閉じてる-->
+
+    </div>       <!-- class="menuItems" を閉じてる → まろやかはここまで -->
+<!------------------------------------------------------------------------->
+
+    <h5> <br> </h5>
+
+<!-- グリーンカレー ------------------------------------------------------->
+    <h3 class="toggleMenu" style="cursor: pointer; color: #e53935; ">
+      グリーンカレー
+    </h3>
+    <div class="menuItems" style="display: none;">
+
+      <div class="item">
+        <figure>
+          <img src="img/green.jpg" alt="グリーン" class="item-image" data-target="green">
+          <figcaption>グリーンカレー</figcaption>
+        </figure>
+
+        <div class="item-details" id="green">
+
+          <h3>ごはん付きお弁当</h3>
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="green" data-price="780" data-label="グリーンカレー">
+                  <option value="" disabled selected>780円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="input-with-unit">
+                <select name="green_rice" data-price="780" data-label="グリーンカレー<br>ご飯大盛">
+                  <option value="" disabled selected>780円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="green_roux" data-price="830" data-label="グリーンカレー<br>ルー大盛">
+                  <option value="" disabled selected>830円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+              <select name="green_large" data-price="830" data-label="グリーンカレー<br>ご飯ルー大盛">
+                  <option value="" disabled selected>830円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <div class="item-details">
+        <h3>ルー</h3>
+        <h2>200gが1人前、300gが大盛りです</h2>
+        <div class="option-grid-roux">
+
+          <div class="option-item">
+            <label>100g</label>
+            <div class="select-with-unit">
+              <select name="green100" data-price="280" data-label="グリーンカレー100g">
+                <option value="" disabled selected>280円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>200g</label>
+            <div class="select-with-unit">
+              <select name="green200" data-price="560" data-label="グリーンカレー200g">
+                <option value="" disabled selected>560円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>300g</label>
+            <div class="select-with-unit">
+              <select name="green300" data-price="840" data-label="グリーンカレー300g">
+                <option value="" disabled selected>840円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>400g</label>
+            <div class="select-with-unit">
+              <select name="green400" data-price="1120" data-label="グリーンカレー400g">
+                <option value="" disabled selected>1120円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+        </div>  <!-- class="option-grid-roux" を閉じてる-->
+      </div> <!-- class="item-details" を閉じてる-->
+
+    </div>       <!-- class="menuItems" を閉じてる → グリーンはここまで -->
+<!------------------------------------------------------------------------->
+
+    <h5> <br> </h5>
+
+<!-- レッドカレー ---------------------------------------------------------------------->
+    <h3 class="toggleMenu" style="cursor: pointer; color: #e53935; ">
+      レッドカレー
+    </h3>
+    <div class="menuItems" style="display: none;">
+
+      <div class="item">
+        <figure>
+          <img src="img/red.jpg" alt="レッド" class="item-image" data-target="red">
+          <figcaption>レッドカレー</figcaption>
+        </figure>
+
+        <div class="item-details" id="red">
+
+          <h3>ごはん付きお弁当</h3>
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="red" data-price="760" data-label="レッドカレー">
+                  <option value="" disabled selected>760円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="red_rice" data-price="760" data-label="レッドカレー<br>ご飯大盛">
+                  <option value="" disabled selected>760円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="red_roux" data-price="810" data-label="レッドカレー<br>ルー大盛">
+                  <option value="" disabled selected>810円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="red_large" data-price="810" data-label="レッドカレー<br>ご飯ルー大盛">
+                  <option value="" disabled selected>810円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <div class="item-details">
+        <h3>ルー</h3>
+        <h2>200gが1人前、300gが大盛りです</h2>
+        <div class="option-grid-roux">
+
+          <div class="option-item">
+            <label>100g</label>
+            <div class="select-with-unit">
+              <select name="red100" data-price="260" data-label="レッドカレー100g">
+                <option value="" disabled selected>260円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>200g</label>
+            <div class="select-with-unit">
+              <select name="red200" data-price="520" data-label="レッドカレー200g">
+                <option value="" disabled selected>520円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>300g</label>
+            <div class="select-with-unit">
+              <select name="red300" data-price="780" data-label="レッドカレー300g">
+                <option value="" disabled selected>780円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>400g</label>
+            <div class="select-with-unit">
+              <select name="red400" data-price="1040" data-label="レッドカレー400g">
+                <option value="" disabled selected>1040円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+        </div>  <!-- class="option-grid-roux" を閉じてる-->
+      </div> <!-- class="item-details" を閉じてる-->
+
+    </div>       <!-- class="menuItems" を閉じてる → レッドはここまで -->
+<!------------------------------------------------------------------------->
+
+    <h5> <br> </h5>
+
+<!-- スープカレー --------------------------------------------------------->
+    <h3 class="toggleMenu" style="cursor: pointer; color: #e53935; ">
+      スープカレー
+    </h3>
+    <div class="menuItems" style="display: none;">
+
+      <div class="item">
+        <figure>
+          <img src="img/soup.jpg" alt="スープ" class="item-image" data-target="soup">
+          <figcaption>スープカレー</figcaption>
+        </figure>
+
+        <div class="item-details" id="soup">
+ 
+          <h3>ごはん付きお弁当</h3>
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="soup" data-price="880" data-label="スープカレー">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="soup_rice" data-price="880" data-label="スープカレー<br>ご飯大盛">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="soup_roux" data-price="930" data-label="スープカレー<br>ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="soup_large" data-price="930" data-label="スープカレー<br>ご飯ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <div class="item-details">
+        <h3>ルー</h3>
+        <div class="option-grid-roux">
+
+          <div class="option-item">
+            <label>スープカレー<br>1人前</label>
+            <div class="select-with-unit">
+              <select name="soup_1" data-price="580" data-label="スープカレー1人前">
+                <option value="" disabled selected>580円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+          <div class="option-item">
+            <label>チキンスープ<br>1人前</label>
+            <div class="select-with-unit">
+              <select name="chicken_soup" data-price="650" data-label="チキンスープカレー1人前">
+                <option value="" disabled selected>650円</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <span class="unit">個</span>
+            </div>
+          </div>
+
+        </div>  <!-- class="option-grid-roux" を閉じてる-->
+        <h4>※ チキンスープカレーは、スープカレーに手羽元をトッピングしたものです</h4>
+      </div> <!-- class="item-details" を閉じてる-->
+
+    </div>       <!-- class="menuItems" を閉じてる → スープはここまで -->
+<!------------------------------------------------------------------------->
+
+    <h5> <br> </h5>
+
+<!-- ハーフ＆ハーフ ------------------------------------------------------->
+    <h3 class="toggleMenu" style="cursor: pointer; color: #e53935; ">
+      ハーフ＆ハーフ
+    </h3>
+    <div class="menuItems" data-category="ハーフ＆ハーフ" style="display: none;">
+
+
+<!-- まろやかーグリーン --------------------------------------------------->
+      <div class="item">
+        <figure>
+          <img src="img/half.jpg" alt="ハーフ" class="item-image" data-target="m-g">
+          <figcaption class="small-caption">まろやか＆グリーン</figcaption>
+        </figure>
+
+        <div class="item-details" id="M-G">
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="m-g" data-price="880" data-label="まろやか＆グリーン">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="m-g_rice" data-price="880" data-label="まろやか＆グリーン・ご飯大盛">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="m-g_roux" data-price="930" data-label="まろやか＆グリーン・ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="m-g_large" data-price="930" data-label="まろやか＆グリーン・ご飯ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <h5> <br> </h5>
+
+<!-- まろやかーレッド ---------------------------------------------------->
+      <div class="item">
+        <figure>
+          <img src="img/half.jpg" alt="ハーフ" class="item-image" data-target="m-r">
+          <figcaption>まろやか＆レッド</figcaption>
+        </figure>
+
+        <div class="item-details" id="M-R">
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="m-r" data-price="880" data-label="まろやか＆レッド">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="m-r_rice" data-price="880" data-label="まろやか＆レッド・ご飯大盛">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="m-r_roux" data-price="930" data-label="まろやか＆レッド・ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="m-r_large" data-price="930" data-label="まろやか＆レッド・ご飯ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <h5> <br> </h5>
+
+<!-- まろやかースープ ---------------------------------------------------->
+      <div class="item">
+        <figure>
+          <img src="img/half.jpg" alt="ハーフ" class="item-image" data-target="m-s">
+          <figcaption>まろやか＆スープ</figcaption>
+        </figure>
+
+        <div class="item-details" id="M-S">
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="m-s" data-price="880" data-label="まろやか＆スープ">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="m-s_rice" data-price="880" data-label="まろやか＆スープ・ご飯大盛">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="m-s_roux" data-price="930" data-label="まろやか＆スープ・ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="m-s_large" data-price="930" data-label="まろやか＆スープ・ご飯ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <h5> <br> </h5>
+
+<!-- グリーンーレッド ---------------------------------------------------->
+      <div class="item">
+        <figure>
+          <img src="img/half.jpg" alt="ハーフ" class="item-image" data-target="g-r">
+          <figcaption>グリーン＆レッド</figcaption>
+        </figure>
+
+        <div class="item-details" id="G-R">
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+              <select name="g-r" data-price="880" data-label="グリーン＆レッド">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="g-r_rice" data-price="880" data-label="グリーン＆レッド・ご飯大盛">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="g-r_roux" data-price="930" data-label="グリーン＆レッド・ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="g-r_large" data-price="930" data-label="グリーン＆レッド・ご飯ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <h5> <br> </h5>
+
+<!-- グリーンースープ ----------------------------------------------------->
+      <div class="item">
+        <figure>
+          <img src="img/half.jpg" alt="ハーフ" class="item-image" data-target="g-s">
+          <figcaption>グリーン＆スープ</figcaption>
+        </figure>
+
+        <div class="item-details" id="G-S">
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="g-s" data-price="880" data-label="グリーン＆スープ">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="g-s_rice" data-price="880" data-label="グリーン＆スープ・ご飯大盛">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="g-s_roux" data-price="930" data-label="グリーン＆スープ・ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="g-s_large" data-price="930" data-label="グリーン＆スープ・ご飯ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <h5> <br> </h5>
+
+<!-- レッドースープ ------------------------------------------------------>
+      <div class="item">
+        <figure>
+          <img src="img/half.jpg" alt="ハーフ" class="item-image" data-target="r-s">
+          <figcaption>レッド＆スープ</figcaption>
+        </figure>
+
+        <div class="item-details" id="R-S">
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>普通盛</label>
+              <div class="select-with-unit">
+                <select name="r-s" data-price="880" data-label="レッド＆スープ">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯大盛</label>
+              <div class="select-with-unit">
+                <select name="r-s_rice" data-price="880" data-label="レッド＆スープ・ご飯大盛">
+                  <option value="" disabled selected>880円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ルー大盛<br>&nbsp;</label>
+              <div class="select-with-unit">
+                <select name="r-s_roux" data-price="930" data-label="レッド＆スープ・ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ご飯ルー大盛 </label>
+              <div class="select-with-unit">
+                <select name="r-s_large" data-price="930" data-label="レッド＆スープ・ご飯ルー大盛">
+                  <option value="" disabled selected>930円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- 弁当の class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <h5> <br> </h5>
+
+    </div> <!-- class="menuItems" を閉じてる → ハーフ＆ハーフはここまで -->
+<!------------------------------------------------------------------------->
+
+    <h5> <br> </h5>
+
+<!-- サイドメニュー ------------------------------------------------------->
+    <h3 class="toggleMenu" style="cursor: pointer; color: #e53935; ">
+      サイドメニュー
+    </h3>
+    <div class="menuItems" style="display: none;">
+
+      <div class="item">
+        <figure>
+          <img src="img/salad.jpg" alt="サラダ" class="item-image" data-target="salad">
+          <figcaption>サラダ</figcaption>
+        </figure>
+
+        <div class="item-details" id="salad">
+
+          <h2>ドレッシングを選択してください</h2>
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>しょうゆ</label>
+              <div class="select-with-unit">
+                <select name="salad_soysauce" data-price="200" data-label="サラダ（しょうゆドレ）">
+                  <option value="" disabled selected>200円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ごま</label>
+              <div class="select-with-unit">
+                <select name="salad_goma" data-price="200" data-label="サラダ（ごまドレ）">
+                  <option value="" disabled selected>200円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- サラダの class ="option-grid"  を閉じてる-->
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <div class="item">
+        <figure>
+          <img src="img/pickles.jpg" alt="ピクルス" class="item-image" data-target="pickles">
+          <figcaption>和風ピクルス</figcaption>
+        </figure>
+
+        <div class="item-details" id="pickles">
+
+          <h2>ピクルスは<br>自家製・和風です</h2>
+          <div class="option-grid">
+
+            <div class="option-item">
+              <label>ピクルス<br>&nbsp;</label>  
+              <!--「 &nbsp; 」※消えないスペース（スペースは後に続く文字がないと、無視されることがある）-->
+              <div class="select-with-unit">
+               <select name="pickles" data-price="250" data-label="自家製和風ピクルス">
+                  <option value="" disabled selected>250円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+            <div class="option-item">
+              <label>ピクルス<br>＋青トン</label>
+              <div class="select-with-unit">
+                <select name="pickles_blue-ton" data-price="300" data-label="自家製和風ピクルス（青トン入り）">
+                  <option value="" disabled selected>300円</option>
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <span class="unit">個</span>
+              </div>
+            </div>
+
+          </div>  <!-- ピクルスの class ="option-grid"  を閉じてる-->
+
+        </div>    <!-- class="item-details" を閉じてる-->
+                  <!-- figure と item-details を item 内で横並びにしてる-->
+
+      </div>      <!-- class="item" を閉じてる-->
+
+      <h2>※青トンは、青唐辛子のピューレのことです</h2>
+
+    </div> <!-- class="menuItems" を閉じてる → サイドメニューはここまで -->
+<!------------------------------------------------------------------------->
+
+    <label>備考
+      <textarea name="user_notes" rows="4" placeholder="辛さ調整など、ご希望があれば入力してください"></textarea>
+    </label>
+
+    <p id="total">合計金額: ¥0</p>
+
+    <div class="button">
+      <button id="OrderPreview" type="button">注文内容を確認する</button>
+    </div>
+
+
+  </form>
+
+<!-- iPhone 用動作確認エリア-->
+<div id="logArea" style="white-space: pre-wrap; font-size: 12px;"></div>
+
+
+
+ <!-- 注文確認用エリア　オーバーレイ（元のページの上に配置されるページ） -->
+  <div id="overlay"></div>
+
+  <div id="OrderCheck">    <!-- 注文確認モーダル -->
+    <h1>ご注文内容の確認</h1>
+    <div id="OrderDetails"></div>
+    <div style="text-align: center; margin-top: 10vw;">
+      <div class="button">
+        <button id="FinalSubmit" type="button">この内容で送信</button>
+      </div>
+      <br><br>
+      <div class="button">
+        <button id="CloseModal" type="button">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+ <!-- フォーム送信後のページ -->
+  <div id="ThankYouPage" style="display:none; text-align:center; margin-top:100px;">
+    <h1 style="font-size:80px;">ご注文ありがとうございます</h1>
+    <p style="font-size:60px;">ご来店お待ちしております</p>
+  </div>
+
+
+
+
+<!-- CHATGPTの修正：Windows・Android・iOS対応の統合JS -->
+<script>
+// CHATGPTの修正：DOMContentLoadedで統一的に処理
+document.addEventListener('DOMContentLoaded', function () {
+  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent) && !window.MSStream;
+
+  // CHATGPTの修正：toggleMenuの動作（クリック＋iOS用タッチ）
+  const toggleMenus = document.querySelectorAll('.toggleMenu');
+  const menuItems = document.querySelectorAll('.menuItems');
+  let touchHandled = false;
+
+  toggleMenus.forEach((toggle, index) => {
+    const menu = menuItems[index];
+
+    console.log(`${menuItems[index]}のトグルメニューをクリック`);
+
+    const toggleFunction = () => {
+      const isHidden = menu.style.display === 'none' || menu.style.display === '';
+      menu.style.display = isHidden ? 'block' : 'none';
+    };
+
+   // Android・iPhoneどちらもOKなtouchend
+    toggle.addEventListener('touchend', (e) => {
+      e.preventDefault(); // clickの二重発火を抑える
+      touchHandled = true;
+      toggleFunction();
+    }, { passive: false }); // preventDefaultを効かせるためにfalseにする！
+
+   // 保険としてclickも入れる（PCブラウザ対応）
+    toggle.addEventListener('click', (e) => {
+      if (touchHandled) {
+        touchHandled = false;
+        return;
+      }
+      toggleFunction();
+    });
+
+  });
+
+  // CHATGPTの修正：合計金額計算
+  const form = document.getElementById('OrderForm');
+  const selects = form.querySelectorAll('select[data-price]');
+  const totalDisplay = document.getElementById('total');
+  function calculateTotal() {
+    let total = 0;
+    selects.forEach(select => {
+      const quantity = parseInt(select.value, 10);
+      const price = parseInt(select.dataset.price, 10);
+      if (!isNaN(quantity)) {
+        total += quantity * price;
+      }
+    });
+    totalDisplay.textContent = `合計金額: ¥${total.toLocaleString()}`;
+  }
+  selects.forEach(select => select.addEventListener('change', calculateTotal));
+  calculateTotal();
+
+  // CHATGPTの修正：OrderPreviewボタンクリック時の処理
+  document.getElementById('OrderPreview').addEventListener('click', function (event) {
+    event.preventDefault();
+    // 必須チェック
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+
+
+ //日付によって、来店時間が営業時間か判定
+ // 営業時間チェック関数を事前に作成
+
+  function isValidTime() {
+
+    const timeInput = document.querySelector('input[name="time"]');
+    const time = parseTime(timeInput.value);
+    const today = new Date();
+    const day = today.getDay();
+
+    let validRanges = [];
+
+
+   // ここで休業日なら終了
+    if (isClosed(today)) {
+      console.log("本日は休業日です。");
+      alert("本日は休業日です。ご注文いただけません。");
+      return false;
+    }
+
+  //日付による営業時間判定
+    if (isHoliday(today) || day === 6) {
+      if (day !== 0) {
+        validRanges = [[660, 1140]]; // 11:00〜19:00
+      }
+    } 
+ 
+    else {
+      validRanges = [[660, 840], [1020, 1200]];
+    }
+
+    const isValid = validRanges.some(([start, end]) => time >= start && time <= end);
+
+    if (!isValid) {
+　　  console.log("来店予定時間が受付時間外です。");
+      alert("来店予定時間が受付時間外です。選び直してください。");
+      return false;
+    }
+
+    return true;
+
+    function parseTime(t) {
+      const [h, m] = t.split(":").map(Number);
+      return h * 60 + m;
+    }
+
+  //休業日かどうかチェックする関数
+    function isClosed(date) {
+      const closedDays = [
+        '1-1', '1-2', '1-3','5-3', '5-4', '5-5','5-6',
+        '12-27', '12-28', '12-29', '12-30', '12-31'
+      ];
+      const m = date.getMonth() + 1;
+      const d = date.getDate();
+      return closedDays.includes(`${m}-${d}`);
+    }
+
+  //祝日かどうかチェックする関数
+    function isHoliday(date) {
+      const holidays = [
+        '1-13', '2-11','2-23','2-24','3-20','4-29','7-21','8-11',
+        '9-15','9-23','10-13','11-3', '11-23','11-24'
+      ];
+      const m = date.getMonth() + 1;
+      const d = date.getDate();
+      return holidays.includes(`${m}-${d}`);
+    }
+  } //function isValidTime() を閉じている
+
+
+
+
+
+
+    // 営業時間チェック（関数が定義されていれば使う）
+    if (typeof isValidTime === 'function' && !isValidTime()) return;
+
+    // 電話番号バリデーション
+    const phoneInput = document.getElementById('user_tel');
+    const phone = phoneInput.value.trim();
+    const phoneRegex = /^((070|080|090)\d{8}|042\d{7})$/;
+    if (!phoneRegex.test(phone)) {
+      alert("電話番号は、070/080/090で始まる11桁か、042で始まる10桁を入力してください。");
+      phoneInput.focus();
+      return;
+    }
+
+    // モーダル表示処理
+    const details = document.getElementById('OrderDetails');
+    details.innerHTML = '';
+    const formData = new FormData(form);
+    const name = formData.get('user_name');
+    const time = formData.get('time');
+    const tel = formData.get('user_tel');
+    const email = formData.get('user_email');
+    const note = formData.get('user_notes');
+    details.innerHTML += `<p>お名前: ${name}　様</p>`;
+    details.innerHTML += `<p>来店予定時間: ${time}</p>`;
+    details.innerHTML += `<p>電話番号: ${tel}</p>`;
+    if (email) details.innerHTML += `<p>メールアドレス: ${email}</p>`;
+    if (note) details.innerHTML += `<p>備考: ${note}</p>`;
+
+    // 選択された商品を一覧表示
+    selects.forEach(select => {
+      const quantity = parseInt(select.value, 10);
+      const label = select.dataset.label || '';
+      if (!isNaN(quantity) && quantity > 0) {
+        details.innerHTML += `<p>${label}：${quantity}個</p>`;
+      }
+    });
+
+    document.getElementById('overlay').style.display = 'block';
+    document.getElementById('OrderCheck').style.display = 'block';
+  });
+
+
+
+
+ // モーダルキャンセルボタン（注文確認画面を閉じる処理）
+  document.getElementById('CloseModal').addEventListener('click', function () {
+    document.getElementById('OrderCheck').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+  });
+
+ //オーバーレイをクリックしたら閉じる場合：
+  document.getElementById('overlay').addEventListener('click', function() {
+    document.getElementById('OrderCheck').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+  });
+
+
+
+
+
+  // iOSログ（任意）
+  if (isIOS) {
+    const area = document.getElementById('logArea');
+    if (area) area.textContent += 'CHATGPT：iOS判定済\\n';
+  }
+});
+</script>
+
+<!-- EmailJS ------------------------------------------------------------->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+
+
+ // フォーム送信イベント（2通同時送信）
+  document.getElementById('FinalSubmit').addEventListener('click', function() {
+    const form = document.getElementById('OrderForm');
+
+   // 商品名のパターン（商品が多数ある場合）
+    const products = [
+      "maro", "maro_rice", "maro_roux", "maro_large", "maro100", "maro200", "maro300", "maro400",
+      "green", "green_rice", "green_roux", "green_large", "green100", "green200", "green300", "green400",
+      "red", "red_rice", "red_roux", "red_large", "red100", "red200", "red300", "red400",
+      "soup", "soup_rice", "soup_roux", "soup_large", "soup_1", "chicken_soup",
+      "m-g", "m-g_rice", "m-g_roux", "m-g_large",
+      "m-r", "m-r_rice", "m-r_roux", "m-r_large",
+      "m-s", "m-s_rice", "m-s_roux", "m-s_large",
+      "g-r", "g-r_rice", "g-r_roux", "g-r_large",
+      "g-s", "g-s_rice", "g-s_roux", "g-s_large",
+      "r-s", "r-s_rice", "r-s_roux", "r-s_large",
+      "salad_soysauce", "salad_goma", "pickles", "pickles_blue-ton"
+    ];
+
+   // 各商品についてチェックする
+    products.forEach(product => {
+      if (form[product]) {
+        const value = form[product].value;
+      // もしvalueが "1～5" のどれでもないなら、nullにする
+        if (![ "1", "2", "3", "4", "5"].includes(value)) {
+          form[product].value = "";
+         //console.log(`${form[product].name} =「${form[product].value}」（無効な値）`);
+        }
+        else {
+          console.log(`${form[product].name} =「${form[product].value}」（有効な値）`);
+        }
+      }
+    });
+
+
+   // 日付を取得して、日付ごとに使うアカウントを設定
+    const today = new Date();
+    const day = today.getDate();
+
+    let userId = '';
+    let serviceId = '';
+
+    if (day >= 1 && day <= 30) {
+     //アカウント①
+      userID = "2v4FPThoAjB4wv-Tz";
+      serviceID = "service_saituno_mail01";
+      templateID_guest ="template_saituno_guest01";
+      templateID_shop  ="template_saituno_shop01";
+    } else if (day >= 11 && day <= 20) {
+     //アカウント②
+      userID = "";
+      serviceID = "";
+      templateID_guest ="";
+      templateID_shop  ="";
+    } else {
+     //アカウント③
+      userID = "";
+      serviceID = "";
+      templateID_guest ="";
+      templateID_shop  ="";
+    }
+
+console.log(`userID : ${userID}`);
+console.log(`serviceID : ${serviceID}`);
+console.log(`templateID_guest : ${templateID_guest}`);
+console.log(`templateID_shop : ${templateID_shop}`);
+
+
+   // EmailJS のユーザーIDを入力
+    emailjs.init(userID);
+
+   // お客さん宛
+    emailjs.sendForm(serviceID, templateID_guest, form)
+      .then(function() {
+        console.log('客への送信成功');
+      }
+      , function(error) {
+         console.error('客への送信失敗:', error);
+      }); // お客さん宛の emailjs.sendform を閉じてる
+
+
+   // 店舗宛
+    emailjs.sendForm(serviceID, templateID_shop, form)
+      .then(function() {
+        console.log('店舗への送信成功');
+
+       //注文完了画面への遷移用（厳密には元のページを非表示）
+        document.getElementById('OrderCheck').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('OrderForm').style.display = 'none';
+        document.querySelectorAll('h1').forEach(function(h1) {
+          if (!h1.closest('#ThankYouPage')) { 
+           // ThankYouPageの中にないh1だけ非表示
+            h1.style.display = 'none';
+          }
+        });
+        document.querySelector('h2').style.display = 'none';
+        document.getElementById('ThankYouPage').style.display = 'block';
+      }
+      , function(error) {
+         console.error('店舗への送信失敗:', error);
+      });// お店宛の emailjs.sendform を閉じてる
+
+  }); //フォーム送信イベントのdocument を閉じてる
+
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent) && !window.MSStream;
+
+  const toggleMenus = document.querySelectorAll('.toggleMenu');
+  const menuItems = document.querySelectorAll('.menuItems');
+
+  toggleMenus.forEach((toggle, index) => {
+    const menu = menuItems[index];
+    const toggleFunction = () => {
+      const isHidden = menu.style.display === 'none' || menu.style.display === '';
+      menu.style.display = isHidden ? 'block' : 'none';
+    };
+    toggle.addEventListener('click', toggleFunction);
+    toggle.addEventListener('touchstart', toggleFunction);
+  });
+
+  const form = document.getElementById('OrderForm');
+  const selects = form.querySelectorAll('select[data-price]');
+  const totalDisplay = document.getElementById('total');
+
+  function calculateTotal() {
+    let total = 0;
+    selects.forEach(select => {
+      const quantity = parseInt(select.value, 10);
+      const price = parseInt(select.dataset.price, 10);
+      if (!isNaN(quantity)) {
+        total += quantity * price;
+      }
+    });
+    totalDisplay.textContent = `合計金額: ¥${total.toLocaleString()}`;
+  }
+  selects.forEach(select => select.addEventListener('change', calculateTotal));
+  calculateTotal();
+
+  document.getElementById('OrderPreview').addEventListener('click', function (event) {
+    event.preventDefault();
+    // ここにバリデーション処理やモーダル処理を入れてください（元のコード流用）
+  });
+
+  if (isIOS) {
+    function logToScreen(msg) {
+      const area = document.getElementById('logArea');
+      if (area) area.textContent += msg + '\n';
+    }
+    logToScreen('iOS判定済：JavaScript動作中');
+  }
+});
+</script>
+
+</body>
+</html>
