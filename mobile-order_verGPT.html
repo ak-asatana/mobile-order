@@ -1875,56 +1875,5 @@ console.log(`templateID_shop : ${templateID_shop}`);
   }); //フォーム送信イベントのdocument を閉じてる
 
 </script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent) && !window.MSStream;
-
-  const toggleMenus = document.querySelectorAll('.toggleMenu');
-  const menuItems = document.querySelectorAll('.menuItems');
-
-  toggleMenus.forEach((toggle, index) => {
-    const menu = menuItems[index];
-    const toggleFunction = () => {
-      const isHidden = menu.style.display === 'none' || menu.style.display === '';
-      menu.style.display = isHidden ? 'block' : 'none';
-    };
-    toggle.addEventListener('click', toggleFunction);
-    toggle.addEventListener('touchstart', toggleFunction);
-  });
-
-  const form = document.getElementById('OrderForm');
-  const selects = form.querySelectorAll('select[data-price]');
-  const totalDisplay = document.getElementById('total');
-
-  function calculateTotal() {
-    let total = 0;
-    selects.forEach(select => {
-      const quantity = parseInt(select.value, 10);
-      const price = parseInt(select.dataset.price, 10);
-      if (!isNaN(quantity)) {
-        total += quantity * price;
-      }
-    });
-    totalDisplay.textContent = `合計金額: ¥${total.toLocaleString()}`;
-  }
-  selects.forEach(select => select.addEventListener('change', calculateTotal));
-  calculateTotal();
-
-  document.getElementById('OrderPreview').addEventListener('click', function (event) {
-    event.preventDefault();
-    // ここにバリデーション処理やモーダル処理を入れてください（元のコード流用）
-  });
-
-  if (isIOS) {
-    function logToScreen(msg) {
-      const area = document.getElementById('logArea');
-      if (area) area.textContent += msg + '\n';
-    }
-    logToScreen('iOS判定済：JavaScript動作中');
-  }
-});
-</script>
-
 </body>
 </html>
